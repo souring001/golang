@@ -37,29 +37,76 @@ func main() {
     fmt.Println("start capturing...")
 
     for packet := range packetSource.Packets() {
-
-        if tcp := packet.Layer(layers.LayerTypeTCP); tcp != nil {
-            // fmt.Println("TCP")
-        }else if udp := packet.Layer(layers.LayerTypeUDP); udp != nil {
-            // fmt.Println("UDP")
-            // fmt.Println(packet)
-        }else if arp := packet.Layer(layers.LayerTypeARP); arp != nil {
-            // fmt.Println("ARP")
-            // fmt.Println(packet)
-        }else if lldp := packet.Layer(layers.LayerTypeLinkLayerDiscovery); lldp != nil {
-            // fmt.Println("LLDP")
-            // fmt.Println(packet)ICMPv4
+        if lldp := packet.Layer(layers.LayerTypeLinkLayerDiscovery); lldp != nil {
+            fmt.Println("LLDP")
+            if net := packet.NetworkLayer(); net != nil {
+              src, dst := net.NetworkFlow().Endpoints()
+              fmt.Println("src:", src, "\tdst:", dst)
+            }
+            fmt.Println(packet)
+        }else if dns := packet.Layer(layers.LayerTypeDNS); dns != nil {
+            fmt.Println("DNS")
+            if net := packet.NetworkLayer(); net != nil {
+              src, dst := net.NetworkFlow().Endpoints()
+              fmt.Println("src:", src, "\tdst:", dst)
+            }
+            fmt.Println(packet)
         }else if icmpv4 := packet.Layer(layers.LayerTypeICMPv4); icmpv4 != nil {
             fmt.Println("ICMPv4")
+            if net := packet.NetworkLayer(); net != nil {
+              src, dst := net.NetworkFlow().Endpoints()
+              fmt.Println("src:", src, "\tdst:", dst)
+            }
             fmt.Println(packet)
-        }else{
-            // fmt.Println("OTHERS")
+        }else if icmpv6 := packet.Layer(layers.LayerTypeICMPv6); icmpv6 != nil {
+            fmt.Println("ICMPv6")
+            if net := packet.NetworkLayer(); net != nil {
+              src, dst := net.NetworkFlow().Endpoints()
+              fmt.Println("src:", src, "\tdst:", dst)
+            }
+            fmt.Println(packet)
+        }else if dhcpv4 := packet.Layer(layers.LayerTypeDHCPv4); dhcpv4 != nil {
+            fmt.Println("DHCPv4")
+            if net := packet.NetworkLayer(); net != nil {
+              src, dst := net.NetworkFlow().Endpoints()
+              fmt.Println("src:", src, "\tdst:", dst)
+            }
+            fmt.Println(packet)
+        }else if arp := packet.Layer(layers.LayerTypeARP); arp != nil {
+            fmt.Println("ARP")
+            if net := packet.NetworkLayer(); net != nil {
+              src, dst := net.NetworkFlow().Endpoints()
+              fmt.Println("src:", src, "\tdst:", dst)
+            }
+            fmt.Println(packet)
+        }else if igmp := packet.Layer(layers.LayerTypeIGMP); igmp != nil {
+            fmt.Println("IGMP")
+            if net := packet.NetworkLayer(); net != nil {
+              src, dst := net.NetworkFlow().Endpoints()
+              fmt.Println("src:", src, "\tdst:", dst)
+            }
+            fmt.Println(packet)
+        }else if udp := packet.Layer(layers.LayerTypeUDP); udp != nil {
+            fmt.Println("UDP")
+            if net := packet.NetworkLayer(); net != nil {
+              src, dst := net.NetworkFlow().Endpoints()
+              fmt.Println("src:", src, "\tdst:", dst)
+            }
+            fmt.Println(packet)
+        }else if tcp := packet.Layer(layers.LayerTypeTCP); tcp != nil {
+            // fmt.Println("TCP")
+            // if net := packet.NetworkLayer(); net != nil {
+            //   src, dst := net.NetworkFlow().Endpoints()
+            //   fmt.Println("src:", src, "\tdst:", dst)
+            // }
             // fmt.Println(packet)
+        }else{
+            fmt.Println("OTHERS")
+            if net := packet.NetworkLayer(); net != nil {
+              src, dst := net.NetworkFlow().Endpoints()
+              fmt.Println("src:", src, "\tdst:", dst)
+            }
+            fmt.Println(packet)
         }
-
-
-
-        // Process packet here
-        // fmt.Println(packet)
     }
 }
