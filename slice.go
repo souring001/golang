@@ -8,9 +8,9 @@ const (
 
 func main() {
     led := make([]uint32, count)
-
     fmt.Println(led)
-    castPacket(led, length, false)
+
+    castPacket(led, length, true)
 }
 
 func castPacket(led []uint32, k int, reverse bool) {
@@ -19,7 +19,7 @@ func castPacket(led []uint32, k int, reverse bool) {
 
         for j := 0; j < k; j++ {
             if t := i + j; 0 <= t && t < len(led) {
-                led[t] = 8
+                led[t] = uint32(8 * (j+1) / k)
             }
         }
 
