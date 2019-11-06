@@ -30,6 +30,9 @@ func main() {
     fmt.Println("start capturing...")
 
     for packet := range packetSource.Packets() {
+        if isAnomary(packet) {
+            fmt.Println("aaa")
+        }
         if udp := packet.Layer(layers.LayerTypeUDP); udp != nil {
             // fmt.Println("UDP")
             // if net := packet.NetworkLayer(); net != nil {
@@ -38,23 +41,12 @@ func main() {
             // }
             // fmt.Println(packet)
         }else if tcp := packet.Layer(layers.LayerTypeTCP); tcp != nil {
-            fmt.Println("TCP")
-            if net := packet.NetworkLayer(); net != nil {
-              src, dst := net.NetworkFlow().Endpoints()
-              fmt.Println("src:", src, "\tdst:", dst)
-            }
-            tcpl, _ := tcp.(*layers.TCP)
-            // Bool flags: FIN, SYN, RST, PSH, ACK, URG, ECE, CWR, NS
-            fmt.Printf("\tFIN: %t\n", tcpl.FIN)
-            fmt.Printf("\tSYN: %t\n", tcpl.SYN)
-            fmt.Printf("\tRST: %t\n", tcpl.RST)
-            fmt.Printf("\tPSH: %t\n", tcpl.PSH)
-            fmt.Printf("\tACK: %t\n", tcpl.ACK)
-            fmt.Printf("\tURG: %t\n", tcpl.URG)
-            fmt.Printf("\tECE: %t\n", tcpl.ECE)
-            fmt.Printf("\tCWR: %t\n", tcpl.CWR)
-            fmt.Printf("\tNS : %t\n", tcpl.NS)
-
+            // fmt.Println("TCP")
+            // if net := packet.NetworkLayer(); net != nil {
+            //   src, dst := net.NetworkFlow().Endpoints()
+            //   fmt.Println("src:", src, "\tdst:", dst)
+            // }
+            // fmt.Println(packet)
         }else{
             // fmt.Println("OTHERS")
             // if net := packet.NetworkLayer(); net != nil {
@@ -64,4 +56,16 @@ func main() {
             // fmt.Println(packet)
         }
     }
+}
+
+func isAnomary(packet gopacket.Packet) bool {
+    anmr := false
+    if tcp := packet.Layer(layers.LayerTypeTCP); tcp != nil {
+        tcpl, _ := tcp.(*layers.TCP)
+        // Bool flags: FIN, SYN, RST, PSH, ACK, URG, ECE, CWR, NS
+        if tcpl.FIN && tcpl.URG && tcpl.PSH {
+            anmr = true
+        }
+    }
+    return anmr
 }
