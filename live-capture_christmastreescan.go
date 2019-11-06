@@ -30,7 +30,7 @@ func main() {
     fmt.Println("start capturing...")
 
     for packet := range packetSource.Packets() {
-        if isAnomary(packet) {
+        if isAnomaly(packet) {
             fmt.Println("aaa")
         }
         if udp := packet.Layer(layers.LayerTypeUDP); udp != nil {
@@ -58,14 +58,14 @@ func main() {
     }
 }
 
-func isAnomary(packet gopacket.Packet) bool {
-    anmr := false
+func isAnomaly(packet gopacket.Packet) bool {
+    anml := false
     if tcp := packet.Layer(layers.LayerTypeTCP); tcp != nil {
         tcpl, _ := tcp.(*layers.TCP)
         // Bool flags: FIN, SYN, RST, PSH, ACK, URG, ECE, CWR, NS
         if tcpl.FIN && tcpl.URG && tcpl.PSH {
-            anmr = true
+            anml = true
         }
     }
-    return anmr
+    return anml
 }
