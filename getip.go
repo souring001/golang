@@ -21,6 +21,7 @@ func externalIP() (string, error) {
 	if err != nil {
 		return "", err
 	}
+    var ipaddr net.IP
 	for _, iface := range ifaces {
 		if iface.Flags&net.FlagUp == 0 {
 			continue // interface down
@@ -47,8 +48,13 @@ func externalIP() (string, error) {
 			if ip == nil {
 				continue // not an ipv4 address
 			}
-			return ip.String(), nil
+            ipaddr = ip
+			// return ip.String(), nil
 		}
-	}
-	return "", errors.New("are you connected to the network?")
+    }
+    if ipaddr == nil{
+        return "", errors.New("are you connected to the network?")
+    }else{
+        return ipaddr.String(), nil
+    }
 }
