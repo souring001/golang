@@ -12,6 +12,7 @@ import (
 
 var (
     ipAddr       string = "172.16.80.82"
+    ipAddr6       string = "fe80::18a6:7432:1897:917b"
     device       string = "en0"
     snapshot_len int32  = 1024
     promiscuous  bool   = false
@@ -42,7 +43,7 @@ func main() {
         reverse := true
         if net := packet.NetworkLayer(); net != nil {
           src, dst := net.NetworkFlow().Endpoints()
-          isSrc := strings.Contains(src.String(), ipAddr)
+          isSrc := strings.Contains(src.String(), ipAddr) || strings.Contains(src.String(), ipAddr6)
           isDst := strings.Contains(dst.String(), ipAddr)
           // if !((isSrc && !isDst) || (!isSrc && isDst)) {
           //     fmt.Println("src:", src, isSrc, "\tdst:", dst, isDst)

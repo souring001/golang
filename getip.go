@@ -44,7 +44,8 @@ func externalIP() (string, error) {
 			if ip == nil || ip.IsLoopback() {
 				continue
 			}
-			ip = ip.To4()
+			fmt.Println(ip)
+			ip = ip.To4() //To16 if IPv6
 			if ip == nil {
 				continue // not an ipv4 address
 			}
