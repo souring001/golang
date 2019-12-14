@@ -12,6 +12,7 @@ import (
 
 type layerMeta struct{
     color uint32
+    show bool
 }
 
 var (
@@ -24,14 +25,15 @@ var (
     timeout      time.Duration = 50 * time.Millisecond
     handle       *pcap.Handle
     layerMap = map[string]layerMeta{
-        "arp": layerMeta{ color: 0x000000 },
-        "icmp": layerMeta{ color: 0x000000 },
-        "tcp": layerMeta{ color: 0xFFFFFF },
-        "udp": layerMeta{ color: 0x000000 },
-        "igmp": layerMeta{ color: 0x000000 },
-        "dns": layerMeta{ color: 0x000000 },
-        "dhcp": layerMeta{ color: 0x000000 },
-        "anomaly": layerMeta{ color: 0x000000 },
+        "ARP":      layerMeta{ color: 0x000001, show: true },
+        "ICMP":     layerMeta{ color: 0x000002, show: true },
+        "TCP":      layerMeta{ color: 0x000003, show: true },
+        "UDP":      layerMeta{ color: 0x000004, show: true },
+        "IGMP":     layerMeta{ color: 0x000005, show: true },
+        "DNS":      layerMeta{ color: 0x000006, show: true },
+        "DHCP":     layerMeta{ color: 0x000007, show: true },
+        "Anomaly":  layerMeta{ color: 0x000008, show: true },
+        "Others":   layerMeta{ color: 0x000000, show: true },
     }
 )
 
@@ -75,30 +77,36 @@ func main() {
 
         packetName := categorizePacket(packet)
         fmt.Println(packetName)
-        fmt.Println(layerMap[packetName].color)
+        meta := layerMap[packetName]
+        fmt.Println(meta.color)
+        if meta.show {
+            fmt.Println(packetName)
+        }
+
+        // cast(led, ... , meta.color)
     }
 }
 
 func categorizePacket(packet gopacket.Packet) string {
-    packetName := "others";
+    packetName := "Others";
     if lldp := packet.Layer(layers.LayerTypeLinkLayerDiscovery); lldp != nil {
-        packetName = "lldp"
+        packetName = "LLDP"
     }else if dns := packet.Layer(layers.LayerTypeDNS); dns != nil {
-        packetName = "dns"
+        packetName = "DNS"
     }else if icmpv4 := packet.Layer(layers.LayerTypeICMPv4); icmpv4 != nil {
-        packetName = "icmp"
+        packetName = "ICMP"
     }else if icmpv6 := packet.Layer(layers.LayerTypeICMPv6); icmpv6 != nil {
-        packetName = "icmp"
+        packetName = "ICMP"
     }else if dhcpv4 := packet.Layer(layers.LayerTypeDHCPv4); dhcpv4 != nil {
-        packetName = "dhcp"
+        packetName = "DHCP"
     }else if arp := packet.Layer(layers.LayerTypeARP); arp != nil {
-        packetName = "arp"
+        packetName = "ARP"
     }else if igmp := packet.Layer(layers.LayerTypeIGMP); igmp != nil {
-        packetName = "igmp"
+        packetName = "IGMP"
     }else if udp := packet.Layer(layers.LayerTypeUDP); udp != nil {
-        packetName = "udp"
+        packetName = "UDP"
     }else if tcp := packet.Layer(layers.LayerTypeTCP); tcp != nil {
-        packetName = "tcp"
+        packetName = "TCP"
     }
     return packetName
 }
