@@ -43,6 +43,10 @@ func main() {
     if err != nil {log.Fatal(err) }
     defer handle.Close()
 
+    asd := layerMap["ARP"]
+    asd.show = false
+    layerMap["ARP"] = asd
+
     // Set filter
     // var filter string = "tcp and port 80"
     // err = handle.SetBPFFilter(filter)
