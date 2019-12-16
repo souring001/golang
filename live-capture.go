@@ -60,6 +60,10 @@ func main() {
     fmt.Println("start capturing...")
 
     for packet := range packetSource.Packets() {
+
+        // fmt.Println(*packetSource)
+        // time.Sleep(time.Second * 1)
+
         reverse := true
         if net := packet.NetworkLayer(); net != nil {
           src, dst := net.NetworkFlow().Endpoints()
@@ -74,17 +78,26 @@ func main() {
           }
         }
         if reverse {
-            fmt.Println("<-")
+            // fmt.Println("<-")
         } else {
-            fmt.Println("->")
+            // fmt.Println("->")
         }
 
+        tp := packet.Metadata().Timestamp
+        fmt.Println(tp)
+
+        tn := time.Now()
+        fmt.Println(tn)
+
+        fmt.Println(tn.Sub(tp))
+
         packetName := categorizePacket(packet)
-        fmt.Println(packetName)
         meta := layerMap[packetName]
-        fmt.Println(meta.color)
+        // fmt.Println(meta.color)
         if meta.show {
             fmt.Println(packetName)
+            fmt.Println("--------")
+            // fmt.Println(packet)
         }
 
         // cast(led, ... , meta.color)
