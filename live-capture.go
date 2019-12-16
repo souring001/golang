@@ -62,7 +62,7 @@ func main() {
     for packet := range packetSource.Packets() {
 
         // fmt.Println(*packetSource)
-        // time.Sleep(time.Second * 1)
+        fmt.Println("----------------")
 
         reverse := true
         if net := packet.NetworkLayer(); net != nil {
@@ -83,20 +83,27 @@ func main() {
             // fmt.Println("->")
         }
 
-        tp := packet.Metadata().Timestamp
-        fmt.Println(tp)
+        packetTime := packet.Metadata().Timestamp
+        // fmt.Println(packetTime)
 
-        tn := time.Now()
-        fmt.Println(tn)
+        nowTime := time.Now()
+        // fmt.Println(nowTime)
 
-        fmt.Println(tn.Sub(tp))
+        diffTime := nowTime.Sub(packetTime)
+        fmt.Println("delay:", diffTime)
+        // fmt.Println(diffTime > 10 * time.Second)
+        if diffTime > 10 * time.Second {
+            fmt.Println("skip")
+            continue
+        }
+
+        time.Sleep(250 * time.Millisecond)
 
         packetName := categorizePacket(packet)
         meta := layerMap[packetName]
         // fmt.Println(meta.color)
         if meta.show {
             fmt.Println(packetName)
-            fmt.Println("--------")
             // fmt.Println(packet)
         }
 
